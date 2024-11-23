@@ -87,9 +87,63 @@ jobs:
           path: |
             OpenPNGStudio/assets/
             OpenPNGStudio/OpenPNGStudio.exe
+            
+  openbsd:
+    runs-on: ubuntu-latest
+    needs: checkout
+    name: OpenBSD build
+    if: needs.checkout.outputs.build == 'false'
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: OpenBSD Build
+        uses: vmactions/openbsd-vm@v1
+        with:
+          sync: sshfs
+          prepare: |
+            pkg_add cmake ninja meson curl
+          run: |
+            cd OpenPNGStudio
+            meson build
+            cd build
+            ninja
+            ln ./OpenPNGStudio ../OpenPNGStudio
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-openbsd-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/OpenPNGStudio
+
+  freebsd:
+    runs-on: ubuntu-latest
+    needs: checkout
+    name: FreeBSD build
+    if: needs.checkout.outputs.build == 'false'
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: FreeBSD Build
+        uses: vmactions/freebsd-vm@v1
+        with:
+          sync: sshfs
+          prepare: |
+            pkg install -y cmake ninja meson curl xorg
+          run: |
+            cd OpenPNGStudio
+            meson build
+            cd build
+            ninja
+            ln ./OpenPNGStudio ../OpenPNGStudio
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-freebsd-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/OpenPNGStudio
 
   release:
-    needs: [linux, windows]
+    needs: [linux, windows, openbsd, freebsd]
     runs-on: ubuntu-latest
     name: Release built binaries
     steps:
