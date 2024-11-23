@@ -52,3 +52,9 @@ jobs:
           meson build
           cd build
           ninja
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-OpenPNGStudio-x86_64
+          path: |
+            assets/
+            build/OpenPNGStudio
