@@ -56,5 +56,5 @@ jobs:
         with:
           name: linux-OpenPNGStudio-x86_64
           path: |
-            assets/
-            build/OpenPNGStudio
+            OpenPNGStudio/assets/
+            OpenPNGStudio/build/OpenPNGStudio
