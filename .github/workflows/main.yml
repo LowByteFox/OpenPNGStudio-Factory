@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkout
     name: Linux build
-    if: needs.checkout.outputs.build == 'false' || true
+    if: needs.checkout.outputs.build == 'false'
 
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkout
     name: Windows build
-    if: needs.checkout.outputs.build == 'false' || true
+    if: needs.checkout.outputs.build == 'false'
 
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkout
     name: OpenBSD build
-    if: needs.checkout.outputs.build == 'false' || true
+    if: needs.checkout.outputs.build == 'false'
     
     steps:
       - uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkout
     name: FreeBSD build
-    if: needs.checkout.outputs.build == 'false' || true
+    if: needs.checkout.outputs.build == 'false'
     
     steps:
       - uses: actions/checkout@v4
