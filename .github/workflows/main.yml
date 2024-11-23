@@ -7,22 +7,48 @@ on:
   workflow_dispatch:
   schedule:
     - cron: 0 0 * * *
-  
 
 jobs:
   checkout:
     runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.check.outputs.same_commit }}
     steps:
       - uses: actions/checkout@v4 
       - name: Checkout repository
+        id: check
         run: |
           git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
           cd OpenPNGStudio
-          git rev-parse HEAD > ../commit
+          COMMIT=$(git rev-parse HEAD)
           cd ..
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add commit
-          git commit -m "hash"
-          git push
-        
+          if [ $COMMIT != $(cat commit) ]; then
+            echo "$COMMIT" > commit
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add commit
+            git commit -m "commit hash update"
+            git push
+
+            echo "same_commit=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "same_commit=true" >> "$GITHUB_OUTPUT"
+          fi
+  linux:
+    runs-on: ubuntu-latest
+    needs: checkout
+    if: needs.checkout.outputs.build == 'false' || env.FORCE_BUILD == '1'
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Linux Build
+        run: |
+          git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+          cd OpenPNGStudio
+          sudo apt update
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          sudo apt install -y ninja cmake meson gcc g++
+
+          meson build
+          cd build
+          ninja
