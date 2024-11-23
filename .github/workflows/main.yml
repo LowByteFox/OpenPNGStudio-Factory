@@ -101,8 +101,9 @@ jobs:
         with:
           sync: sshfs
           prepare: |
-            pkg_add cmake ninja meson curl
+            pkg_add cmake ninja meson curl git
           run: |
+            git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
             cd OpenPNGStudio
             meson build
             cd build
@@ -128,8 +129,9 @@ jobs:
         with:
           sync: sshfs
           prepare: |
-            pkg install -y cmake ninja meson curl xorg
+            pkg install -y cmake ninja meson curl xorg git
           run: |
+            git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
             cd OpenPNGStudio
             meson build
             cd build
