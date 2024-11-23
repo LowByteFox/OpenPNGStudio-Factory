@@ -11,9 +11,9 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4 
       - name: Checkout repository
-      - uses: actions/checkout@v4
-      - run: |
+        run: |
           git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
           cd OpenPNGStudio
           git rev-parse HEAD > ../commit
