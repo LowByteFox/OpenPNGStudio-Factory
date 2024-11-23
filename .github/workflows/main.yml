@@ -47,7 +47,7 @@ jobs:
           cd OpenPNGStudio
           sudo apt update
           sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
-          sudo apt install -y ninja cmake meson gcc g++
+          sudo apt install -y ninja-build cmake meson gcc g++
 
           meson build
           cd build
