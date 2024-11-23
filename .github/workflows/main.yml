@@ -99,7 +99,6 @@ jobs:
       - name: OpenBSD Build
         uses: vmactions/openbsd-vm@v1
         with:
-          sync: sshfs
           prepare: |
             pkg_add cmake ninja meson curl git
           run: |
@@ -127,7 +126,6 @@ jobs:
       - name: FreeBSD Build
         uses: vmactions/freebsd-vm@v1
         with:
-          sync: sshfs
           prepare: |
             pkg install -y cmake ninja meson curl xorg git
           run: |
