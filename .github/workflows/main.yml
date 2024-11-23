@@ -37,7 +37,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     needs: checkout
-    name: Build Linux version
+    name: Linux build
     if: needs.checkout.outputs.build == 'false' || '1' == '1'
 
     steps:
@@ -60,14 +60,49 @@ jobs:
           path: |
             OpenPNGStudio/assets/
             OpenPNGStudio/OpenPNGStudio
+  windows:
+    runs-on: ubuntu-latest
+    needs: checkout
+    name: Windows build
+    if: needs.checkout.outputs.build == 'false' || '1' == '1'
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows Build
+        run: |
+          git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+          cd OpenPNGStudio
+          sudo apt update
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          sudo apt install -y ninja-build cmake meson gcc g++
+          sudo apt install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-x86-64-dev
+
+          ./setup_mingw.sh
+          cd build-mingw
+          ninja
+          ln ./OpenPNGStudio.exe ../OpenPNGStudio.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-windows-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/OpenPNGStudio.exe
+
   release:
-    needs: [linux]
+    needs: [linux, windows]
     runs-on: ubuntu-latest
     name: Release built binaries
     steps:
       - uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          path: .
+
+      - name: Merge
+        run: |
+          sudo apt install -y zip
+          for dir in OpenPNGStudio-*-x86_64; do
+            zip -r $dir.zip $dir
+          done
           
       - uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191
         env:
@@ -76,4 +111,4 @@ jobs:
           tag_name: canary
           prerelease: true
           files: |
-            artifacts/**/*
+            OpenPNGStudio-*-x86_64.zip
