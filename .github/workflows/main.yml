@@ -1,0 +1,26 @@
+name: Build And Release
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        run: |
+          git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+          cd OpenPNGStudio
+          git rev-parse HEAD > ../commit
+          cd ..
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add commit
+          git commit -m "hash"
+          git push
+        
