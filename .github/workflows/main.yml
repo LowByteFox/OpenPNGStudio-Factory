@@ -37,7 +37,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     needs: checkout
-    name: Builds Linux version
+    name: Build Linux version
     if: needs.checkout.outputs.build == 'false' || '1' == '1'
 
     steps:
@@ -69,7 +69,7 @@ jobs:
         with:
           path: .
           
-      - uses: johnwbyrd/update-release@v1
+      - uses: johnwbyrd/update-release@v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: ./OpenPNGStudio-linux-x86_64.zip
