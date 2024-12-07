@@ -114,6 +114,32 @@ jobs:
           path: |
             OpenPNGStudio/assets/
             OpenPNGStudio/OpenPNGStudio
+  netbsd:
+    runs-on: ubuntu-24.04
+    needs: checkout
+    name: NetBSD build
+    if: needs.checkout.outputs.build == 'false'
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: NetBSD Build
+        uses: vmactions/netbsd-vm@v1
+        with:
+          prepare: |
+            /usr/sbin/pkg_add cmake meson curl git
+          run: |
+            git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+            cd OpenPNGStudio
+            meson build
+            cd build
+            ninja
+            ln ./OpenPNGStudio ../OpenPNGStudio
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-netbsd-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/OpenPNGStudio
 
   freebsd:
     runs-on: ubuntu-24.04
@@ -143,7 +169,7 @@ jobs:
             OpenPNGStudio/OpenPNGStudio
 
   release:
-    needs: [linux, windows, openbsd, freebsd]
+    needs: [linux, windows, openbsd, netbsd, freebsd]
     runs-on: ubuntu-24.04
     name: Release built binaries
     steps:
