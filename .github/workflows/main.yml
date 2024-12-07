@@ -10,7 +10,7 @@ on:
 
 jobs:
   checkout:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       build: ${{ steps.check.outputs.same_commit }}
     steps:
@@ -35,7 +35,7 @@ jobs:
             echo "same_commit=true" >> "$GITHUB_OUTPUT"
           fi
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: checkout
     name: Linux build
     if: needs.checkout.outputs.build == 'false'
@@ -61,7 +61,7 @@ jobs:
             OpenPNGStudio/assets/
             OpenPNGStudio/OpenPNGStudio
   windows:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: checkout
     name: Windows build
     if: needs.checkout.outputs.build == 'false'
@@ -89,7 +89,7 @@ jobs:
             OpenPNGStudio/OpenPNGStudio.exe
             
   openbsd:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: checkout
     name: OpenBSD build
     if: needs.checkout.outputs.build == 'false'
@@ -116,7 +116,7 @@ jobs:
             OpenPNGStudio/OpenPNGStudio
 
   freebsd:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: checkout
     name: FreeBSD build
     if: needs.checkout.outputs.build == 'false'
@@ -144,7 +144,7 @@ jobs:
 
   release:
     needs: [linux, windows, openbsd, freebsd]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: Release built binaries
     steps:
       - uses: actions/download-artifact@v4
