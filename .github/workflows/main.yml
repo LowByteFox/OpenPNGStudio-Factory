@@ -133,6 +133,11 @@ jobs:
         with:
           prepare: |
             /usr/sbin/pkg_add cmake meson curl git
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xbase.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xcomp.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xetc.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xfont.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xserver.tar.xz | tar xzf - -C /
           run: |
             git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
             cd OpenPNGStudio
