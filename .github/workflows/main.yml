@@ -55,7 +55,7 @@ jobs:
           ninja
           ln ./OpenPNGStudio ../OpenPNGStudio
           cd ..
-          rm -r subprojects/
+          rm -rf subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-linux-x86_64
@@ -84,7 +84,7 @@ jobs:
           ninja
           ln ./OpenPNGStudio.exe ../OpenPNGStudio.exe
           cd ..
-          rm -r subprojects/
+          rm -rf subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-windows-x86_64
@@ -113,7 +113,7 @@ jobs:
             ninja
             ln ./OpenPNGStudio ../OpenPNGStudio
             cd ..
-            rm -r subprojects/
+            rm -rf subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-openbsd-x86_64
@@ -141,7 +141,7 @@ jobs:
             ninja
             ln ./OpenPNGStudio ../OpenPNGStudio
             cd ..
-            rm -r subprojects/
+            rm -rf subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-netbsd-x86_64
@@ -170,7 +170,7 @@ jobs:
             ninja
             ln ./OpenPNGStudio ../OpenPNGStudio
             cd ..
-            rm -r subprojects/
+            rm -rf subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-freebsd-x86_64
