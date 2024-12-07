@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: checkout
     name: Linux build
-    if: needs.checkout.outputs.build == 'false'
+    if: needs.checkout.outputs.build == 'false' || true
 
     steps:
       - uses: actions/checkout@v4
@@ -54,6 +54,8 @@ jobs:
           cd build
           ninja
           ln ./OpenPNGStudio ../OpenPNGStudio
+          cd ..
+          rm -r subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-linux-x86_64
@@ -64,7 +66,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: checkout
     name: Windows build
-    if: needs.checkout.outputs.build == 'false'
+    if: needs.checkout.outputs.build == 'false' || true
 
     steps:
       - uses: actions/checkout@v4
@@ -81,6 +83,8 @@ jobs:
           cd build-mingw
           ninja
           ln ./OpenPNGStudio.exe ../OpenPNGStudio.exe
+          cd ..
+          rm -r subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-windows-x86_64
@@ -92,7 +96,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: checkout
     name: OpenBSD build
-    if: needs.checkout.outputs.build == 'false'
+    if: needs.checkout.outputs.build == 'false' || true
     
     steps:
       - uses: actions/checkout@v4
@@ -108,6 +112,8 @@ jobs:
             cd build
             ninja
             ln ./OpenPNGStudio ../OpenPNGStudio
+            cd ..
+            rm -r subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-openbsd-x86_64
@@ -118,7 +124,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: checkout
     name: NetBSD build
-    if: needs.checkout.outputs.build == 'false'
+    if: needs.checkout.outputs.build == 'false' || true
     
     steps:
       - uses: actions/checkout@v4
@@ -134,6 +140,8 @@ jobs:
             cd build
             ninja
             ln ./OpenPNGStudio ../OpenPNGStudio
+            cd ..
+            rm -r subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-netbsd-x86_64
@@ -145,7 +153,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: checkout
     name: FreeBSD build
-    if: needs.checkout.outputs.build == 'false'
+    if: needs.checkout.outputs.build == 'false' || true
     
     steps:
       - uses: actions/checkout@v4
@@ -161,6 +169,8 @@ jobs:
             cd build
             ninja
             ln ./OpenPNGStudio ../OpenPNGStudio
+            cd ..
+            rm -r subprojects/
       - uses: actions/upload-artifact@v4
         with:
           name: OpenPNGStudio-freebsd-x86_64
