@@ -6,8 +6,8 @@ Automated binary builds and releases of OpenPNGStudio
 - Windows
 - FreeBSD
 - OpenBSD
-> Note 1: *BSD have binary builds for their latest release version<br>
-> Note 2: I couldn't get NetBSD to install deps, I have no idea why but pkg_add wasn't shoving any signs of life - it was stuck
+- NetBSD
+> Note: *BSD have binary builds for their latest release version<br>
 
 What about Macos? No, I am NOT going to spend money to buy Mac just to test build it on there, other BSDs didn't require any patches so I'm sure you can
 just as easily build it yourself. MacOS uses stuff from FreeBSD so you can be in luck. However MacOS has their own ABI so you won't run FreeBSD biniares :p
