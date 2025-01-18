@@ -1,0 +1,219 @@
+name: Build Release Binaries And Release
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  checkout:
+    runs-on: ubuntu-24.04
+    outputs:
+      build: ${{ steps.check.outputs.same_commit }}
+    steps:
+      - uses: actions/checkout@v4 
+      - name: Checkout repository
+        id: check
+        run: |
+          git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+          cd OpenPNGStudio
+          COMMIT=$(git rev-parse HEAD)
+          cd ..
+          if [ $COMMIT != $(cat commit) ]; then
+            echo "$COMMIT" > commit
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add commit
+            git commit -m "commit hash update"
+            git push
+
+            echo "same_commit=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "same_commit=true" >> "$GITHUB_OUTPUT"
+          fi
+  linux:
+    runs-on: ubuntu-24.04
+    needs: checkout
+    name: Linux build
+    if: needs.checkout.outputs.build == 'false' || true
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Linux Build
+        run: |
+          git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+          cd OpenPNGStudio
+          sudo apt update
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          sudo apt install -y ninja-build cmake meson gcc g++
+
+          meson build --buildtype=debugoptimized
+          cd build
+          ninja
+          ln ./OpenPNGStudio ../OpenPNGStudio
+          cd ..
+          rm -rf subprojects/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-linux-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/licenses/
+            OpenPNGStudio/OpenPNGStudio
+            OpenPNGStudio/COPYING
+            
+  windows:
+    runs-on: ubuntu-24.04
+    needs: checkout
+    name: Windows build
+    if: needs.checkout.outputs.build == 'false' || true
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows Build
+        run: |
+          git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+          cd OpenPNGStudio
+          sudo apt update
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          sudo apt install -y ninja-build cmake meson gcc g++
+          sudo apt install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 binutils-mingw-w64-x86-64 mingw-w64-x86-64-dev
+
+          ./setup_mingw.sh
+          cd build-mingw
+          ninja 
+          ln ./OpenPNGStudio.exe ../OpenPNGStudio.exe
+          cd ..
+          rm -rf subprojects/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-windows-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/licenses/
+            OpenPNGStudio/OpenPNGStudio.exe
+            OpenPNGStudio/COPYING
+            
+  openbsd:
+    runs-on: ubuntu-24.04
+    needs: checkout
+    name: OpenBSD build
+    if: needs.checkout.outputs.build == 'false' || true
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: OpenBSD Build
+        uses: vmactions/openbsd-vm@v1
+        with:
+          prepare: |
+            pkg_add cmake ninja meson curl git
+          run: |
+            git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+            cd OpenPNGStudio
+            meson build --buildtype=debugoptimized
+            cd build
+            ninja
+            ln ./OpenPNGStudio ../OpenPNGStudio
+            cd ..
+            rm -rf subprojects/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-openbsd-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/licenses/
+            OpenPNGStudio/OpenPNGStudio
+            OpenPNGStudio/COPYING
+            
+  netbsd:
+    runs-on: ubuntu-24.04
+    needs: checkout
+    name: NetBSD build
+    if: needs.checkout.outputs.build == 'false' || true
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: NetBSD Build
+        uses: vmactions/netbsd-vm@v1
+        with:
+          prepare: |
+            /usr/sbin/pkg_add cmake meson curl git
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xbase.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xcomp.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xetc.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xfont.tar.xz | tar xzf - -C /
+            curl -s -L https://cdn.netbsd.org/pub/NetBSD/NetBSD-10.0/amd64/binary/sets/xserver.tar.xz | tar xzf - -C /
+          run: |
+            git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+            cd OpenPNGStudio
+            meson build --buildtype=debugoptimized
+            cd build
+            ninja
+            ln ./OpenPNGStudio ../OpenPNGStudio
+            cd ..
+            rm -rf subprojects/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-netbsd-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/licenses/
+            OpenPNGStudio/OpenPNGStudio
+            OpenPNGStudio/COPYING
+
+  freebsd:
+    runs-on: ubuntu-24.04
+    needs: checkout
+    name: FreeBSD build
+    if: needs.checkout.outputs.build == 'false' || true
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: FreeBSD Build
+        uses: vmactions/freebsd-vm@v1
+        with:
+          prepare: |
+            pkg install -y cmake ninja meson curl xorg git
+          run: |
+            git clone https://codeberg.org/LowByteFox/OpenPNGStudio.git
+            cd OpenPNGStudio
+            meson build --buildtype=debugoptimized
+            cd build
+            ninja
+            ln ./OpenPNGStudio ../OpenPNGStudio
+            cd ..
+            rm -rf subprojects/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenPNGStudio-freebsd-x86_64
+          path: |
+            OpenPNGStudio/assets/
+            OpenPNGStudio/licenses/
+            OpenPNGStudio/OpenPNGStudio
+            OpenPNGStudio/COPYING
+
+  release:
+    needs: [linux, windows, openbsd, netbsd, freebsd]
+    runs-on: ubuntu-24.04
+    name: Release built binaries
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: .
+
+      - name: Merge
+        run: |
+          sudo apt install -y zip
+          for dir in OpenPNGStudio-*-x86_64; do
+            zip -r $dir.zip $dir
+          done
+          
+      - uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: canary
+          prerelease: true
+          files: |
+            OpenPNGStudio-*-x86_64.zip
